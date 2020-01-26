@@ -7,7 +7,16 @@
           position: relative;
           width: 320px; height: 240px;
         }
-        video { position: absolute; top: 0; left: 0; width: 320px; height: 240px; }
+        video { position: absolute; top: 0; left: 0; width: 320px; height: 240px;object-fit: fill; }
+        #overlay-canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          z-index: 1003;
+          background-color:rgba(0, 0, 0, 0.048);
+        }
         div#inner {
           position: absolute;
           margin: 0 auto;
@@ -24,26 +33,29 @@
           background-color: rgba(255, 0, 0, 0.3);
           zindex: 1001;
         }
+
       </style>
     </head>
     <body>
       <h1>Barcode scanner</h1>
       <p>Based on <a href="https://github.com/yurydelendik/zbarjs">zbarjs</a> - Code: <a href="https://gist.github.com/jazzido/9435670">https://gist.github.com/jazzido/9435670</a></p>
       <div>
-        <video autoplay playsinline></video>
+        <video autoplay playsinline muted preload="auto"></video>
         <div id="inner"></div>
-        <div id="redline">
-        </div>
+        <div id="redline"></div>
+        <canvas id="overlay-canvas"></canvas>
       </div>
       <ul id="decoded">
       </ul>
-      <canvas style="display:none;"></canvas>
+      <canvas id="canvas" style="display:none;"></canvas>
 
       <button onclick="localMediaStream ? stop():start()">Scan</button>
       <script type="text/javascript">
         var video = document.querySelector('video');
         var canvas = document.querySelector('canvas');
-        var ctx = canvas.getContext('2d');
+        // var ctx = canvas.getContext('2d');
+        var ctx = document.getElementById('canvas').getContext('2d')
+        var overlay_ctx = document.getElementById('overlay-canvas').getContext('2d')
         var localMediaStream = null;
         var list = document.querySelector('ul#decoded');
 
@@ -52,14 +64,15 @@
             if (event.data.length == 0) return;
             var d = event.data[0];
             var entry = document.createElement('li');
-            entry.appendChild(document.createTextNode(d[2] + ' (' + d[0] + ')'));
+            entry.appendChild(document.createTextNode(d[1] + ' (' + d[0] + ')'));
             list.appendChild(entry);
-            console.log(d)
+            drawPoly(overlay_ctx, d[2])
+            renderData(overlay_ctx, d[1], d[2], d[2][1] - 10)
         };
 
         function snapshot() {
             if (localMediaStream === null) return;
-            var ctx = canvas.getContext('2d');
+            // var ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight,
                           0, 0, canvas.width, canvas.height);
 
@@ -82,7 +95,29 @@
         function stop() {
               video.srcObject.getTracks().forEach((track)=>{track.stop()})
               localMediaStream = null
+          clearInterval(snapshot)
         }
+        function drawPoly(ctx, poly) {
+            // drawPoly expects a flat array of coordinates forming a polygon (e.g. [x1,y1,x2,y2,... etc])
+                ctx.beginPath();
+                ctx.moveTo(poly[0], poly[1]);
+                for (item = 2; item < poly.length - 1; item += 2) { ctx.lineTo(poly[item], poly[item + 1]) }
+
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "#FF0000";
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            // render the string contained in the barcode as text on the canvas
+        function renderData(ctx, data, x, y) {
+                ctx.font = "15px Arial";
+                ctx.fillStyle = "green";
+                ctx.fillText(data, x, y);
+                setTimeout(()=>{
+                  ctx.clearRect(0, 0, 320, 240)
+                },100)
+            }
       </script>
     </body>
 </html>

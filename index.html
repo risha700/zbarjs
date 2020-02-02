@@ -2,18 +2,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
     "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"> 
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=0.60">
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.85">
+    <!-- <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /> -->
     <title>JS in-browser barcode reader</title>
       <style type="text/css">
-        /* div.video-wrapper {
-          position: relative;
-          width: 40.000em; height: 30.000em;
-        
-        } */
-        
-        video { position: absolute; top: 0; left: 0;object-fit: fill;width: 100%;height: 100%;}
+        video { position: absolute; top: 0; left: 0;object-fit: fill;width: 98%;height: 98%;}
         #overlay-canvas {
           position: absolute;
           top: 0;
@@ -80,7 +74,7 @@
             /* padding: 8px; */
             text-decoration: none;
             /* font-size: 50px; */
-            color: #818181;
+            color:  rgba(255, 0, 0, 0.3);
             display: block; /* Display block instead of inline */
             transition: 0.3s; /* Transition effects on hover (color) */
             border:12px double;
@@ -93,7 +87,23 @@
             white-space: nowrap;
             vertical-align: baseline;
           }
-
+          #trigger_btn{
+            background-image: url('data:image/png;base64,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');
+            width: 50px;
+            height: 50px;
+            background-clip: padding-box;
+            background-size: contain;
+            background-repeat: no-repeat;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+          }
+          ::-webkit-media-controls {
+              display:none !important;
+            }
+          ::-webkit-media-controls-enclosure {
+              display:none !important;
+            }
       </style>
 
     </head>
@@ -101,7 +111,7 @@
       <h1>Barcode scanner</h1>
       <div id="overlay" class="video-wrapper">
         <a href="javascript:void(0)" class="closebtn" onclick="stop()"> &times;</a>
-        <video autoplay playsinline muted style="pointer-events: none;"></video>
+        <video playsinline autoplay muted style="pointer-events: none;"></video>
         <div id="inner"></div>
         <div id="redline"></div>
         <canvas id="overlay-canvas" width=640 height=480></canvas>
@@ -111,21 +121,19 @@
       <canvas id="stream-canvas" width=640 height=480
        style="display:none;width: 640px;height: 480px;"></canvas>
       <div class="scan-btn-wrapper">
-        <button onclick="localMediaStream ? stop():start()">SCAN</button>
+        <button id="trigger_btn" onclick="localMediaStream ? stop():start()"></button>
       </div>
       <script type="text/javascript">
         var localMediaStream = null;
+        var interval = null
         var video = document.querySelector('video');
         var stream_canvas = document.getElementById('stream-canvas')
         var ctx = stream_canvas.getContext('2d')
         var overlay_ctx = document.getElementById('overlay-canvas').getContext('2d')
         var list = document.querySelector('ul#decoded');
         var modal = document.getElementById('overlay')
-        var interval = null
-
-
         var worker = new Worker('zbar-processor.js');
-        worker.onmessage = function(event) {
+        worker.onmessage = async function(event) {
             if (event.data.length == 0) return;
             var d = event.data[0];
             var entry = document.createElement('li');
@@ -133,7 +141,7 @@
             list.appendChild(entry);
             drawPoly(overlay_ctx, d[2])
             renderData(overlay_ctx, d[1], d[2][0], d[2][1])
-            stop()
+            await stop()
             // renderData(overlay_ctx, d[1], d[2][0], d[2][1] - 10)
         };
 
@@ -162,9 +170,10 @@
                 audio:false,
                 }
               ).then((stream)=>{
-                          modal.style.width = "100%"
-                           video.srcObject = stream
-                           localMediaStream = true
+                video.srcObject = stream
+                localMediaStream = true
+                modal.style.width = "100%"
+                video.onloadedmetadata = (e)=> {video.play();}
                     }).catch((error)=>alert(error))
            interval = setInterval(snapshot, 1000/3.777778);
         }
@@ -179,14 +188,13 @@
         }
 
         function drawPoly(ctx, poly) {
-          // var coordinates = trisect(poly)
             // drawPoly expects a flat array of coordinates forming a polygon (e.g. [x1,y1,x2,y2,... etc])
                 ctx.beginPath();
                 ctx.moveTo(poly[0], poly[1]);
-                ctx.strokeStyle = "deepskyblue";
+                ctx.strokeStyle = "#00bfff";
                 ctx.lineWidth = 2.3;
-                ctx.shadowColor = '#FFF';
-                ctx.shadowBlur = 3;
+                // ctx.shadowColor = '#FFF';
+                // ctx.shadowBlur = 3;
                 for (item = 2; item < poly.length - 1; item += 2) { 
                   ctx.lineTo(poly[item], poly[item + 1]) 
                 }
@@ -201,19 +209,10 @@
                 ctx.fillStyle = "green";
                 // ctx.fillText(data, x, y);
                 setTimeout(()=>{
-                  ctx.clearRect(0, 0, 640,480)
+                  ctx.clearRect(0, 0, stream_canvas.width, stream_canvas.height)
                 },100)
             }
-        function cropCanvas(sourceCanvas,left,top,width,height) {
-              let destCanvas = document.createElement('canvas');
-              destCanvas.width = width;
-              destCanvas.height = height;
-              data = destCanvas.getContext("2d").drawImage(
-                  sourceCanvas,
-                  left,top,width,height,  // source rect with content to crop
-                  0,0,width,height);      // newCanvas, same size as source rect
-              return destCanvas;
-          }
+
   
       </script>
     </body>
